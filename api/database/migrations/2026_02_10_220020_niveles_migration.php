@@ -11,7 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('niveles', function (Blueprint $table) {
+            $table->unsignedTinyInteger('nivel')->primary(); // PK
+            $table->integer('diamantes_requeridos');
+
+            $table->timestamps(); // opcional pero recomendable
+        });
     }
 
     /**
@@ -19,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('niveles');
     }
 };

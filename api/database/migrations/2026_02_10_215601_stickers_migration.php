@@ -11,7 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('stickers', function (Blueprint $table) {
+            $table->id('id_sticker'); // INT AUTO_INCREMENT PRIMARY KEY
+            $table->string('nombre', 100);
+            $table->string('url_imagen', 255);
+            $table->boolean('es_premium')->default(false);
+            $table->boolean('exclusivo_nivel')->default(false);
+            $table->timestamps(); // Opcional pero recomendado
+        });
     }
 
     /**
@@ -19,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('stickers');
     }
 };

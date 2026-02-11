@@ -11,7 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('estados', function (Blueprint $table) {
+            $table->id('id_estado');
+
+            // FK a users (tu tabla real)
+            $table->foreignId('id_usuario')
+                  ->constrained('users') // referencia a users.id
+                  ->onDelete('cascade');
+
+            $table->string('contenido', 500);
+
+            $table->dateTime('fecha_publicacion')->useCurrent();
+
+            $table->timestamps(); // opcional pero recomendable
+        });
     }
 
     /**
@@ -19,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('estados');
     }
 };

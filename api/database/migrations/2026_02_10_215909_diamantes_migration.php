@@ -11,7 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('puntos', function (Blueprint $table) {
+            $table->id('id_puntos');
+
+            // FK a users
+            $table->foreignId('id_usuario')
+                  ->constrained('users') // referencia a users.id
+                  ->onDelete('cascade');
+
+            $table->integer('diamantes')->default(0);
+
+            $table->timestamps(); // opcional pero recomendable
+        });
     }
 
     /**
@@ -19,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('puntos');
     }
 };

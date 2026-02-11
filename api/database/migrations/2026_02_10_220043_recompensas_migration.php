@@ -11,7 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('recompensas_nivel', function (Blueprint $table) {
+            $table->id('id_recompensa');
+
+            // FK a niveles
+            $table->unsignedTinyInteger('nivel');
+            $table->foreign('nivel')
+                  ->references('nivel')
+                  ->on('niveles')
+                  ->onDelete('cascade');
+
+            // FK a stickers
+            $table->foreignId('id_sticker')
+                  ->constrained('stickers', 'id_sticker')
+                  ->onDelete('cascade');
+
+            $table->timestamps(); // opcional pero recomendable
+        });
     }
 
     /**
@@ -19,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('recompensas_nivel');
     }
 };

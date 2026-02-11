@@ -11,7 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('feed', function (Blueprint $table) {
+            $table->id('id_feed');
+
+            // FK a users
+            $table->foreignId('id_usuario')
+                  ->constrained('users')
+                  ->onDelete('cascade');
+
+            // FK a publicidad opcional
+            $table->foreignId('id_publicidad')
+                  ->nullable()
+                  ->constrained('publicidad', 'id_publicidad')
+                  ->nullOnDelete();
+
+            $table->string('contenido', 500)->nullable();
+
+            $table->enum('tipo', ['mensaje', 'estado', 'publicidad']);
+
+            $table->dateTime('fecha')->useCurrent();
+
+            $table->timestamps();
+        });
     }
 
     /**
@@ -19,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('feed');
     }
 };

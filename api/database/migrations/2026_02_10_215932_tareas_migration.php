@@ -11,7 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('tareas', function (Blueprint $table) {
+            $table->id('id_tarea');
+
+            $table->string('nombre', 100);
+            $table->string('descripcion', 300)->nullable();
+            $table->integer('diamantes_ganados');
+
+            $table->boolean('activa')->default(true);
+
+            $table->timestamps(); // opcional pero recomendable
+        });
     }
 
     /**
@@ -19,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('tareas');
     }
 };

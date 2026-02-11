@@ -11,7 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('pagos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('cascade');
+            $table->decimal('monto', 10, 2);
+            $table->enum('metodo_pago', ['tarjeta','paypal','diamantes','otro']);
+            $table->string('descripcion')->nullable();
+            $table->timestamps(); // created_at será la fecha de pago
+        });
     }
 
     /**
@@ -19,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('pagos');
     }
 };

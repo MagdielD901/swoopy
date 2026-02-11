@@ -11,7 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('personalizacion', function (Blueprint $table) {
+            $table->id('id_personalizacion');
+
+            // FK a users
+            $table->foreignId('id_usuario')
+                  ->constrained('users') // referencia a users.id
+                  ->onDelete('cascade');
+
+            $table->string('tema', 50)->nullable();
+            $table->string('fuente', 50)->nullable();
+            $table->string('color_principal', 20)->nullable();
+
+            $table->timestamps(); // opcional pero recomendable
+        });
     }
 
     /**
@@ -19,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('personalizacion');
     }
 };
