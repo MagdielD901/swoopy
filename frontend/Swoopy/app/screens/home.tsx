@@ -11,7 +11,6 @@ import {
   Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
 const { width } = Dimensions.get('window');
 
 export default function Home() {
@@ -27,7 +26,7 @@ export default function Home() {
         <View style={styles.header}>
           <View>
             <Text style={styles.dateText}>FRI, JAN 30, 2026</Text>
-            <Text style={styles.headerTitle}>Feeds</Text>
+            <Text style={styles.headerTitle}>Feed</Text>
           </View>
           <TouchableOpacity style={styles.profileWrapper}>
             <View style={styles.profileGlow} />
@@ -42,7 +41,20 @@ export default function Home() {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          
+          <View style={styles.discoverySection}>
+            <Text style={styles.discoveryTitle}>Descubrimiento</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop: 10}}>
+                <View style={styles.discoveryCard}>
+                  <Image source={require("../../assets/images/swoopy.png")} style={styles.discoveryAvatar} />
+                    <Text style={styles.discoveryName}>@swoopy</Text>
+                </View>
+                <View style={styles.discoveryCard}>
+                  <Image source={{ uri: 'https://randomuser.me/api/portraits/women/55.jpg' }} style={styles.discoveryAvatar} />
+                    <Text style={styles.discoveryName}>@diane.m</Text>
+                </View>
+              </ScrollView>
+          </View>
+
           <View style={styles.mainLayout}>
             {/* COLUMNA PRINCIPAL - POSTS */}
             <View style={styles.postColumn}>
@@ -52,7 +64,7 @@ export default function Home() {
                     source={{ uri: 'https://randomuser.me/api/portraits/women/32.jpg' }} 
                     style={styles.userAvatar} 
                   />
-                  <Text style={styles.userName}>Anna_Smith</Text>
+                  <Text style={styles.userName}>@annasmith</Text>
                 </View>
 
                 <Image 
@@ -72,19 +84,87 @@ export default function Home() {
                 </View>
               </View>
             </View>
-
-          
           </View>
+
+          <View style={styles.mainLayout}>
+            {}
+              <View style={styles.postColumn}>
+                <View style={styles.glassCard}>
+                  <View style={styles.userInfo}>
+                    <Image 
+                      source={require("../../assets/images/swoopy.png")} 
+                      style={styles.userAvatar} 
+                    />
+                    <Text style={styles.userName}>@swoopy</Text>
+                  </View>
+                <Text style={styles.postDescription}>
+                  "Nomás no te rajes."
+                  <Text style={styles.hashtag}> #Motivación</Text>
+                </Text>
+                <View style={styles.interactions}>
+                  <Interaction icon="heart" count="1.2K" color="#FF375F" />
+                  <Interaction icon="chatbubble" count="345" color="#32D74B" />
+                  <Interaction icon="share-outline" count="120" color="#FFF" />
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.factCard}>
+            <Text style={styles.factTitle}>¿Sabías que…?</Text>
+              <Text style={styles.factText}>
+                El primer mensaje enviado por Internet fue “LO” en 1969. 😲
+              </Text>
+              <View style={styles.interactions}>
+                <Interaction icon="heart" count="1.2K" color="#FF375F" />
+                <Interaction icon="chatbubble" count="345" color="#32D74B" />
+                <Interaction icon="share-outline" count="120" color="#FFF" />
+              </View>
+          </View>
+
+          <View style={styles.marketplaceSection}>
+  <Text style={styles.marketplaceTitle}>Marketplace</Text>
+  <ScrollView 
+    horizontal 
+    showsHorizontalScrollIndicator={false} 
+    style={{ marginTop: 10 }}
+  >
+    {/* Producto 1 */}
+    <View style={styles.marketplaceCard}>
+      <Image 
+        source={require("../../assets/images/sushi.jpg")} 
+        style={styles.marketplaceImage} 
+        resizeMode="cover" 
+      />
+      <Text style={styles.marketplaceName}>Sushi</Text>
+      <Text style={styles.marketplacePrice}>$99.99</Text>
+    </View>
+
+    {/* Producto 2 */}
+    <View style={styles.marketplaceCard}>
+      <Image 
+        source={require("../../assets/images/reloj.jpg")}  
+        style={styles.marketplaceImage} 
+      />
+      <Text style={styles.marketplaceName}>Smartwatch Pro</Text>
+      <Text style={styles.marketplacePrice}>$129.99</Text>
+    </View>
+
+    {/* Producto 3 */}
+    <View style={styles.marketplaceCard}>
+      <Image 
+        source={require("../../assets/images/bonsai.jpg")} 
+        style={styles.marketplaceImage} 
+      />
+      <Text style={styles.marketplaceName}>Bonsái</Text>
+      <Text style={styles.marketplacePrice}>$199.99</Text>
+    </View>
+  </ScrollView>
+</View>
+
 
         </ScrollView>
 
-        {/* BOTTOM TAB BAR */}
-        <View style={styles.tabBar}>
-          <TabItem icon="chatbubbles" label="Chats" active />
-          <TabItem icon="search" label="Explore" />
-          <TabItem icon="people" label="Communities" />
-          <TabItem icon="settings" label="Settings" />
-        </View>
       </SafeAreaView>
     </View>
   );
@@ -139,19 +219,19 @@ const styles = StyleSheet.create({
   dateText: { color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: '700', letterSpacing: 1 },
   headerTitle: { color: '#FFF', fontSize: 34, fontWeight: '900' },
   profileWrapper: { position: 'relative', padding: 3 },
-  profileImage: { width: 54, height: 54, borderRadius: 27, borderWidth: 1.5, borderColor: '#00D4FF' },
+  profileImage: { width: 54, height: 54, borderRadius: 27, borderWidth: 1.5, borderColor: '#006EFF' },
   profileGlow: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
     borderRadius: 30,
     borderWidth: 2,
-    borderColor: 'rgba(0, 212, 255, 0.3)',
+    borderColor: '#006EFF',
     opacity: 0.5,
   },
   addBadge: {
     position: 'absolute',
     bottom: 2, right: 2,
-    backgroundColor: '#00D4FF',
+    backgroundColor: '#006EFF',
     width: 20, height: 20,
     borderRadius: 10,
     justifyContent: 'center', alignItems: 'center',
@@ -168,6 +248,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.12)',
+    marginBottom: 20,
   },
   userInfo: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   userAvatar: { width: 32, height: 32, borderRadius: 10, marginRight: 10 },
@@ -205,4 +286,34 @@ const styles = StyleSheet.create({
   },
   tabItem: { alignItems: 'center' },
   tabLabel: { color: 'rgba(255,255,255,0.3)', fontSize: 10, marginTop: 5, fontWeight: '600' },
+  factCard: {
+  backgroundColor: 'rgba(0, 212, 255, 0.1)',
+  borderRadius: 20,
+  padding: 16,
+  marginBottom: 20,
+  borderWidth: 1,
+  borderColor: 'rgba(0, 212, 255, 0.3)',
+},
+factTitle: { color: '#00D4FF', fontWeight: '900', fontSize: 16, marginBottom: 8 },
+factText: { color: '#FFF', fontSize: 13, lineHeight: 18 },
+discoverySection: { marginBottom:20 },
+discoveryTitle: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+discoveryCard: { alignItems: 'center', marginRight: 16 },
+discoveryAvatar: { width: 60, height: 60, borderRadius: 30, marginBottom: 6, borderWidth: 2, borderColor: '#006EFF' },
+discoveryName: { color: '#FFF', fontSize: 12, fontWeight: '600' },
+marketplaceSection: { marginTop: 30 },
+marketplaceTitle: { color: '#FFF', fontSize: 16, fontWeight: '800', marginBottom: 10 },
+marketplaceCard: { 
+  width: 140, 
+  marginRight: 16, 
+  backgroundColor: 'rgba(255,255,255,0.07)', 
+  borderRadius: 20, 
+  padding: 10, 
+  alignItems: 'center', 
+  borderWidth: 1, 
+  borderColor: 'rgba(255,255,255,0.12)',
+},
+marketplaceImage: { width: "100%", flex:1, height: 100, borderRadius: 16, marginBottom: 8 },
+marketplaceName: { color: '#FFF', fontSize: 12, fontWeight: '600', textAlign: 'center' },
+marketplacePrice: { color: '#00D4FF', fontSize: 12, fontWeight: '700', marginTop: 4 },
 });
