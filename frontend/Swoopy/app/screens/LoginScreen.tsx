@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // 1. Agregamos useState
+import React, { useState } from 'react'; 
 import { 
   View, 
   Text, 
@@ -47,7 +47,7 @@ export default function LoginScreen() {
             <View style={styles.inputWrapper}>
               <Ionicons name="mail-outline" size={20} color="rgba(255,255,255,0.4)" style={styles.inputIcon} />
               <TextInput 
-                placeholder="Correo electrónico" 
+                placeholder="Usuario o Correo electrónico" 
                 placeholderTextColor="rgba(255,255,255,0.4)"
                 style={styles.input}
                 keyboardType="email-address"
@@ -78,9 +78,12 @@ export default function LoginScreen() {
             </View>
 
             {/* LINK CENTRADO */}
-            <TouchableOpacity style={styles.forgotContainer}>
-              <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
-            </TouchableOpacity>
+            <TouchableOpacity 
+  style={styles.forgotContainer} 
+  onPress={() => router.push("/screens/home")} // O la ruta donde tengas tu archivo home.tsx
+>
+  <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+</TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
@@ -94,9 +97,9 @@ export default function LoginScreen() {
 
             <View style={styles.signUpContainer}>
               <Text style={styles.noAccountText}>¿No tienes cuenta? </Text>
-              <TouchableOpacity onPress={() => router.push("/screens/registro")}>
-                <Text style={styles.signUpText}>Regístrate</Text>
-              </TouchableOpacity>
+             <TouchableOpacity onPress={() => router.push("/screens/RegisterScreen")}>
+  <Text style={styles.signUpText}>Regístrate</Text>
+</TouchableOpacity>
             </View>
           </View>
         </View>

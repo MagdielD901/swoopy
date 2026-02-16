@@ -13,7 +13,7 @@ import { useRouter } from "expo-router"; // 1. IMPORTAMOS EL ROUTER
 const { width, height } = Dimensions.get("window");
 
 // ... (Componente Particle se queda igual, no necesita cambios)
-const Particle = ({ index }) => {
+const Particle = ({ index }: { index: number }) => {
   const moveAnim = useRef(new Animated.Value(0)).current;
   const randomX = useMemo(() => Math.random() * width, []);
   const randomSize = useMemo(() => Math.random() * 4 + 1, []);
@@ -118,9 +118,14 @@ export default function PrincipalLogin() {
                 <Text style={[styles.buttonText, {color: '#000', fontWeight: '800'}]}>Iniciar sesión</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.7} style={styles.glassButton}>
-              <Text style={styles.buttonText}>Crear cuenta</Text>
-            </TouchableOpacity>
+           {/* Botón de Crear cuenta actualizado */}
+<TouchableOpacity 
+  activeOpacity={0.7} 
+  style={styles.glassButton}
+  onPress={() => router.push("/screens/RegisterScreen")} // <--- Agregamos esta ruta
+>
+  <Text style={styles.buttonText}>Crear cuenta</Text>
+</TouchableOpacity>
           </Animated.View>
         )}
       </View>
