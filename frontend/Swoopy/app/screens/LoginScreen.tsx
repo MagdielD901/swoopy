@@ -78,12 +78,20 @@ export default function LoginScreen() {
             </View>
 
             {/* LINK CENTRADO */}
-            <TouchableOpacity 
+           <TouchableOpacity 
   style={styles.forgotContainer} 
-  onPress={() => router.push("/screens/home")} // O la ruta donde tengas tu archivo home.tsx
+  onPress={() => router.push("/screens/home")}
 >
   <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
 </TouchableOpacity>
+
+<TouchableOpacity 
+  style={styles.forgotContainer} 
+  onPress={() => router.push("/screens/chats")}
+>
+  <Text style={styles.forgotText}>Ir a Chats</Text>
+</TouchableOpacity>
+
           </View>
 
           <View style={styles.footer}>
