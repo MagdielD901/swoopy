@@ -65,7 +65,7 @@ export default function TabLayout() {
 
       {/* 3. EXPLORE */}
       <Tabs.Screen
-        name="explore"
+        name="narket"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <IconWrapper focused={focused}>
