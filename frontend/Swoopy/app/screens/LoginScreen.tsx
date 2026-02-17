@@ -80,14 +80,14 @@ export default function LoginScreen() {
             {/* LINK CENTRADO */}
            <TouchableOpacity 
   style={styles.forgotContainer} 
-  onPress={() => router.push("/screens/home")}
+  onPress={() => router.push("/(tabs)/home")}
 >
   <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
 </TouchableOpacity>
 
 <TouchableOpacity 
   style={styles.forgotContainer} 
-  onPress={() => router.push("/screens/chats")}
+  onPress={() => router.push("/(tabs)/chats")}
 >
   <Text style={styles.forgotText}>Ir a Chats</Text>
 </TouchableOpacity>
