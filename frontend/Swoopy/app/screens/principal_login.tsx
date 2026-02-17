@@ -109,11 +109,11 @@ export default function PrincipalLogin() {
         ) : (
           <Animated.View style={{ opacity: fadeAnim, width: '100%' }}>
             
-            {/* 3. CONECTAMOS EL BOTÓN DE INICIAR SESIÓN */}
+            {/*  CONECTAMOS EL BOTÓN DE INICIAR SESIÓN */}
             <TouchableOpacity 
               activeOpacity={0.8} 
               style={[styles.glassButton, styles.primaryButton]}
-              onPress={() => router.push("/screens/LoginScreen")} // LA RUTA QUE PUSIMOS EN EL LAYOUT
+              onPress={() => router.push("/screens/LoginScreen")} 
             >
                 <Text style={[styles.buttonText, {color: '#000', fontWeight: '800'}]}>Iniciar sesión</Text>
             </TouchableOpacity>
