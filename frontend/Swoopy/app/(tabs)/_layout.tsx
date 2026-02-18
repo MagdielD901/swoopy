@@ -86,6 +86,20 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="orbix"
+        options={{
+          tabBarLabel: "Orbix",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "scan" : "scan-outline"}
+              size={20}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

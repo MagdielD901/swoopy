@@ -21,6 +21,36 @@ const CATEGORIES = ["Todos", "Peluches", "Hogar", "Limpieza", "Aromas"];
 
 export default function ShopHome() {
   const router = useRouter();
+  const [selectedState, setSelectedState] = React.useState("Selecciona tu estado");
+  const [selectedCity, setSelectedCity] = React.useState("Selecciona tu ciudad");
+  const [showStates, setShowStates] = React.useState(false);
+  const [showCities, setShowCities] = React.useState(false);
+
+  const STATES = {
+  Chihuahua: [
+    "Chihuahua",
+    "Ciudad Juárez",
+    "Delicias",
+    "Cuauhtémoc",
+    "Parral",
+    "Nuevo Casas Grandes",
+  ],
+  Jalisco: [
+    "Guadalajara",
+    "Zapopan",
+    "Tlaquepaque",
+    "Tonalá",
+    "Puerto Vallarta",
+  ],
+  León: [
+    "Monterrey",
+    "San Nicolás",
+    "Guadalupe",
+    "Apodaca",
+    "Santa Catarina",
+  ],
+};
+
 
   return (
     <View style={styles.container}>
@@ -44,6 +74,82 @@ export default function ShopHome() {
             <View style={styles.cartBadge} />
           </TouchableOpacity>
         </View>
+{/* SELECTOR ESTADO */}
+<View style={styles.locationWrapper}>
+  <TouchableOpacity
+    activeOpacity={0.8}
+    onPress={() => {
+      setShowStates(!showStates);
+      setShowCities(false);
+    }}
+  >
+    <BlurView intensity={25} tint="dark" style={styles.locationSelector}>
+      <Ionicons name="map-outline" size={18} color="#00D4FF" />
+      <Text style={styles.locationText}>{selectedState}</Text>
+      <Ionicons
+        name={showStates ? "chevron-up" : "chevron-down"}
+        size={18}
+        color="rgba(255,255,255,0.6)"
+      />
+    </BlurView>
+  </TouchableOpacity>
+
+  {showStates && (
+    <BlurView intensity={40} tint="dark" style={styles.locationDropdown}>
+      {Object.keys(STATES).map((state, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.locationItem}
+          onPress={() => {
+            setSelectedState(state);
+            setSelectedCity("Selecciona tu ciudad");
+            setShowStates(false);
+            setShowCities(true);
+          }}
+        >
+          <Text style={styles.locationItemText}>{state}</Text>
+        </TouchableOpacity>
+      ))}
+    </BlurView>
+  )}
+</View>
+{/* SELECTOR CIUDAD */}
+{selectedState !== "Selecciona tu estado" && (
+  <View style={styles.locationWrapper}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => setShowCities(!showCities)}
+    >
+      <BlurView intensity={25} tint="dark" style={styles.locationSelector}>
+        <Ionicons name="location-outline" size={18} color="#00D4FF" />
+        <Text style={styles.locationText}>{selectedCity}</Text>
+        <Ionicons
+          name={showCities ? "chevron-up" : "chevron-down"}
+          size={18}
+          color="rgba(255,255,255,0.6)"
+        />
+      </BlurView>
+    </TouchableOpacity>
+
+    {showCities && (
+      <BlurView intensity={40} tint="dark" style={styles.locationDropdown}>
+        {STATES[selectedState].map((city, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.locationItem}
+            onPress={() => {
+              setSelectedCity(city);
+              setShowCities(false);
+            }}
+          >
+            <Text style={styles.locationItemText}>{city}</Text>
+          </TouchableOpacity>
+        ))}
+      </BlurView>
+    )}
+  </View>
+)}
+
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
           
@@ -154,6 +260,50 @@ const ProductCard = ({ name, price, image }: any) => {
 };
 
 const styles = StyleSheet.create({
+  locationWrapper: {
+  paddingHorizontal: 20,
+  marginTop: 15,
+  zIndex: 10,
+},
+
+locationSelector: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingHorizontal: 15,
+  height: 50,
+  borderRadius: 16,
+  borderWidth: 1,
+  borderColor: "rgba(255,255,255,0.08)",
+  overflow: "hidden",
+},
+
+locationText: {
+  flex: 1,
+  color: "#FFF",
+  marginLeft: 10,
+  fontWeight: "600",
+},
+
+locationDropdown: {
+  marginTop: 10,
+  borderRadius: 18,
+  paddingVertical: 10,
+  borderWidth: 1,
+  borderColor: "rgba(255,255,255,0.08)",
+  overflow: "hidden",
+},
+
+locationItem: {
+  paddingVertical: 12,
+  paddingHorizontal: 20,
+},
+
+locationItemText: {
+  color: "rgba(255,255,255,0.8)",
+  fontWeight: "600",
+},
+
   container: { flex: 1, backgroundColor: '#05080D' },
   waveContainer: { ...StyleSheet.absoluteFillObject, overflow: 'hidden' },
   wave: { position: 'absolute', width: width * 2, height: width * 2, borderRadius: width, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.03)' },
