@@ -15,7 +15,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import MensajesScreen from "./mensajes";
-
+import { useRouter } from 'expo-router';
 const { width, height } = Dimensions.get("window");
 const ACCENT = "#00D4FF";
 
@@ -152,6 +152,8 @@ const SwipeableChatItem = ({ item, openChatId, setOpenChatId, onPress }: any) =>
 /* ---------------- MAIN ---------------- */
 
 export default function ChatsScreen() {
+  const router = useRouter();
+  const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/300?img=44");
   const [selectedChat, setSelectedChat] = useState<any>(null);
   const [openChatId, setOpenChatId] = useState(null);
   const navigation = useNavigation();
@@ -192,15 +194,26 @@ export default function ChatsScreen() {
             <Text style={styles.headerTitle}>Chats</Text>
           </View>
 
-          <View style={styles.headerIcons}>
-            <TouchableOpacity style={styles.iconCircle}>
-              <Ionicons name="search" size={18} color="#fff" />
-            </TouchableOpacity>
+<View style={styles.headerIcons}>
+  <TouchableOpacity style={styles.iconCircle}>
+    <Ionicons name="search" size={18} color="#fff" />
+  </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.iconCircle, styles.plusBtn]}>
-              <Ionicons name="add" size={20} color="#000" />
-            </TouchableOpacity>
-          </View>
+  <TouchableOpacity style={[styles.iconCircle, styles.plusBtn]}>
+    <Ionicons name="add" size={20} color="#000" />
+  </TouchableOpacity>
+    {/* FOTO DE PERFIL EDITABLE */}
+  <TouchableOpacity
+    style={styles.profileWrapper}
+    activeOpacity={0.8}
+    onPress={() => router.push({ pathname: "/screens/editarp"})}
+    >
+    <Image source={{ uri: profileImage }} style={styles.profileImage} />
+<View style={styles.profileDot} />
+
+  </TouchableOpacity>
+</View>
+
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -390,7 +403,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
   },
-
+profileImage: {
+  width: "100%",
+  height: "100%",
+  borderRadius: 19,
+},
   activeFilterText: { color: "#000" },
 
   chatListContainer: {
@@ -502,4 +519,39 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     display: "flex",
   },
+ profileWrapper: {
+  width: 38,
+  height: 38,
+  borderRadius: 19,
+  position: "relative",
+  borderWidth: 2,
+  borderColor: ACCENT,
+  // NO overflow: "visible"
+},
+profileDot: {
+  position: "absolute",
+  right: -4,
+  bottom: -2,
+  width: 12,
+  height: 12,
+  borderRadius: 6,
+  backgroundColor: ACCENT,
+  borderWidth: 2,
+  borderColor: "#05080D", // igual que el fondo
+},
+
+editBadge: {
+  position: "absolute",
+  bottom: -2,
+  right: -2,
+  width: 16,
+  height: 16,
+  borderRadius: 8,
+  backgroundColor: ACCENT,
+  justifyContent: "center",
+  alignItems: "center",
+  borderWidth: 2,
+  borderColor: "#05080D",
+},
+
 });
