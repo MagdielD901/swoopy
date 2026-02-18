@@ -13,7 +13,6 @@ export default function TabLayout() {
         tabBarActiveTintColor: "#00D4FF",
         tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
         tabBarHideOnKeyboard: true,
-        // 1. Quitamos los márgenes del texto para que no empujen hacia abajo
         tabBarLabelStyle: {
           fontSize: 10,
           margin: 0,
@@ -21,9 +20,8 @@ export default function TabLayout() {
           fontWeight: '500',
         },
         tabBarStyle: styles.tabBar,
-        // 2. Forzamos a que el contenedor de cada icono/texto use todo el alto y se centre
         tabBarItemStyle: {
-          height: 60, // Misma altura que la barra
+          height: 60, 
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
@@ -37,6 +35,7 @@ export default function TabLayout() {
           ),
       }}
     >
+      {/* Ocultar Index de la barra */}
       <Tabs.Screen
         name="index"
         options={{ 
@@ -45,6 +44,7 @@ export default function TabLayout() {
         }}
       />
 
+      {/* CHATS */}
       <Tabs.Screen
         name="chats"
         options={{
@@ -59,6 +59,7 @@ export default function TabLayout() {
         }}
       />
 
+      {/* FEED (HOME) */}
       <Tabs.Screen
         name="home"
         options={{
@@ -73,13 +74,14 @@ export default function TabLayout() {
         }}
       />
 
+      {/* MARKET */}
       <Tabs.Screen
         name="market"
         options={{
           tabBarLabel: "Market",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "scan" : "scan-outline"}
+              name={focused ? "cart" : "cart-outline"}
               size={20}
               color={color}
             />
@@ -87,19 +89,35 @@ export default function TabLayout() {
         }}
       />
 
+      {/* ORBIX (Sugerencia: Planeta o Red) */}
       <Tabs.Screen
         name="orbix"
         options={{
           tabBarLabel: "Orbix",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "scan" : "scan-outline"}
+              name={focused ? "planet" : "planet-outline"}
               size={20}
               color={color}
             />
           ),
         }}
       />
+
+      {/* CONTROL (Sugerencia: Ajustes o Switch) */}
+    <Tabs.Screen
+  name="control"
+  options={{
+    tabBarLabel: "Control",
+    tabBarIcon: ({ color, focused }) => (
+      <Ionicons
+        name={focused ? "settings" : "settings-outline"} // Aquí cambiamos a la tuerca
+        size={20}
+        color={color}
+      />
+    ),
+  }}
+/>
     </Tabs>
   );
 }
@@ -107,13 +125,12 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     position: "absolute",
-    bottom: 20, // Subí esto un poco para que flote mejor y no pegue al borde del cel
-    marginHorizontal: 60,
+    bottom: 20, 
+    marginHorizontal: 20, // Reduje el margen lateral para que quepan bien los 5 iconos
     height: 60,
     backgroundColor: "transparent",
     borderTopWidth: 0,
     elevation: 0,
-    // 3. MUY IMPORTANTE: Elimina el relleno automático de iOS/Android
     paddingBottom: 0,
   },
   blurStyle: {

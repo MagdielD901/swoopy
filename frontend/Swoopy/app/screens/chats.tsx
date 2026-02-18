@@ -495,7 +495,8 @@ const styles = StyleSheet.create({
   tabBarConfig: {
     position: "absolute",
     bottom: 10,
-    marginHorizontal: 60,
+    marginHorizontal: 20,
+    marginBottom:10,
     height: 60,
     backgroundColor: "transparent",
     borderTopWidth: 0,
