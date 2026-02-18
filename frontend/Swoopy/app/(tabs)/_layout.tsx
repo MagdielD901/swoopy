@@ -9,11 +9,26 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: styles.tabBar,
+        tabBarShowLabel: true,
         tabBarActiveTintColor: "#00D4FF",
         tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
-        tabBarHideOnKeyboard: true, // Importante para que el menú no suba con el teclado
+        tabBarHideOnKeyboard: true,
+        // 1. Quitamos los márgenes del texto para que no empujen hacia abajo
+        tabBarLabelStyle: {
+          fontSize: 10,
+          margin: 0,
+          padding: 0,
+          fontWeight: '500',
+        },
+        tabBarStyle: styles.tabBar,
+        // 2. Forzamos a que el contenedor de cada icono/texto use todo el alto y se centre
+        tabBarItemStyle: {
+          height: 60, // Misma altura que la barra
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: 4, 
+        },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
             <BlurView intensity={80} tint="dark" style={styles.blurStyle} />
@@ -22,59 +37,52 @@ export default function TabLayout() {
           ),
       }}
     >
-      {/* INDEX (TOTALMENTE OCULTO: SIN BOTÓN Y SIN BARRA) */}
       <Tabs.Screen
         name="index"
         options={{ 
           href: null,
-          tabBarStyle: { display: "none" } // Fuerza a que en el index no exista el layout
+          tabBarStyle: { display: "none" } 
         }}
       />
 
-      {/* 1. CHATS */}
       <Tabs.Screen
         name="chats"
         options={{
+          tabBarLabel: "Chats",
           tabBarIcon: ({ color, focused }) => (
-            <IconWrapper focused={focused}>
-              <Ionicons
-                name={focused ? "chatbubbles" : "chatbubbles-outline"}
-                size={22}
-                color={color}
-              />
-            </IconWrapper>
+            <Ionicons
+              name={focused ? "chatbubbles" : "chatbubbles-outline"}
+              size={20}
+              color={color}
+            />
           ),
         }}
       />
 
-      {/* 2. HOME */}
       <Tabs.Screen
         name="home"
         options={{
+          tabBarLabel: "Feed",
           tabBarIcon: ({ color, focused }) => (
-            <IconWrapper focused={focused}>
-              <Ionicons
-                name={focused ? "rocket" : "rocket-outline"}
-                size={22}
-                color={color}
-              />
-            </IconWrapper>
+            <Ionicons
+              name={focused ? "rocket" : "rocket-outline"}
+              size={20}
+              color={color}
+            />
           ),
         }}
       />
 
-      {/* 3. EXPLORE */}
       <Tabs.Screen
-        name="narket"
+        name="market"
         options={{
+          tabBarLabel: "Market",
           tabBarIcon: ({ color, focused }) => (
-            <IconWrapper focused={focused}>
-              <Ionicons
-                name={focused ? "scan" : "scan-outline"}
-                size={22}
-                color={color}
-              />
-            </IconWrapper>
+            <Ionicons
+              name={focused ? "scan" : "scan-outline"}
+              size={20}
+              color={color}
+            />
           ),
         }}
       />
@@ -82,28 +90,17 @@ export default function TabLayout() {
   );
 }
 
-function IconWrapper({ focused, children }: any) {
-  return (
-    <View style={styles.iconContainer}>
-      {children}
-      {focused && <View style={styles.activeDot} />}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   tabBar: {
     position: "absolute",
-    bottom: 10,
+    bottom: 20, // Subí esto un poco para que flote mejor y no pegue al borde del cel
     marginHorizontal: 60,
     height: 60,
     backgroundColor: "transparent",
     borderTopWidth: 0,
     elevation: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.45,
-    shadowRadius: 15,
+    // 3. MUY IMPORTANTE: Elimina el relleno automático de iOS/Android
+    paddingBottom: 0,
   },
   blurStyle: {
     ...StyleSheet.absoluteFillObject,
@@ -118,20 +115,5 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
-  },
-  iconContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: Platform.OS === "ios" ? 14 : 0,
-  },
-  activeDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#00D4FF",
-    marginTop: 4,
-    shadowColor: "#00D4FF",
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
   },
 });
