@@ -55,7 +55,7 @@ export default function PerfilScreen() {
               <Ionicons name="arrow-back" size={20} color="#fff" />
             </TouchableOpacity>
 
-            <Text style={styles.headerTitle}>Profile</Text>
+            <Text style={styles.headerTitle}>Perfil</Text>
 
             <TouchableOpacity style={styles.iconCircle}>
               <Ionicons name="ellipsis-horizontal" size={20} color="#fff" />
@@ -71,24 +71,24 @@ export default function PerfilScreen() {
               style={styles.avatar}
             />
 
-            <Text style={styles.name}>Khadija Dubois</Text>
+            <Text style={styles.name}>Mariana García</Text>
             <Text style={styles.phone}>+12-6541-1234</Text>
 
             {/* STATS */}
             <View style={styles.stats}>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>12,145</Text>
-                <Text style={styles.statLabel}>Message</Text>
+                <Text style={styles.statLabel}>Mensajes</Text>
               </View>
 
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>94</Text>
-                <Text style={styles.statLabel}>Group</Text>
+                <Text style={styles.statLabel}>Orbix</Text>
               </View>
 
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>48</Text>
-                <Text style={styles.statLabel}>Spaces</Text>
+                <Text style={styles.statLabel}>Productos</Text>
               </View>
             </View>
           </View>
@@ -96,7 +96,7 @@ export default function PerfilScreen() {
           {/* MEDIA */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Media and photos</Text>
+              <Text style={styles.sectionTitle}>Archivos y fotos</Text>
               <Ionicons name="chevron-forward" size={18} color="#777" />
             </View>
 
@@ -113,10 +113,10 @@ export default function PerfilScreen() {
           {/* OPTIONS CARD */}
           <View style={styles.optionsCard}>
             {[
-              { icon: "notifications-outline", label: "Notification" },
-              { icon: "image-outline", label: "Media visibility" },
-              { icon: "bookmark-outline", label: "Bookmarked" },
-              { icon: "lock-closed-outline", label: "Lock Chat", toggle: true },
+              { icon: "notifications-outline", label: "Notificaciones" },
+              { icon: "image-outline", label: "Fotos" },
+              { icon: "bookmark-outline", label: "Destacados" },
+              { icon: "lock-closed-outline", label: "Bloquear", toggle: true },
             ].map((item, index) => (
               <TouchableOpacity key={index} style={styles.optionRow}>
                 <View style={styles.optionLeft}>
@@ -138,7 +138,7 @@ export default function PerfilScreen() {
           =============================== */}
           <View style={styles.groupsSection}>
             <Text style={[styles.sectionLabel, { color: MODES[mode].color }]}>
-              GRUPOS EN COMUN
+              Orbix en común
             </Text>
 
             <TouchableOpacity style={styles.groupCard}>
