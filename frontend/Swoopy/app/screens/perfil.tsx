@@ -15,6 +15,12 @@ import { useNavigation } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
+const MODES = {
+  SYNC: { color: '#00D4FF', bg: '#02131f', label: 'SYNC' },
+  BOOST: { color: '#7CFF00', bg: '#102100', label: 'BOOST' },
+  OVERLOAD: { color: '#FF0033', bg: '#220008', label: 'OVERLOAD' },
+};
+
 /* ---------- WAVES ---------- */
 const WaveBackground = () => (
   <View style={styles.waveContainer}>
@@ -30,6 +36,7 @@ const WaveBackground = () => (
 
 export default function PerfilScreen() {
   const navigation = useNavigation();
+  const mode = "SYNC";
 
   return (
     <View style={styles.container}>
@@ -126,7 +133,38 @@ export default function PerfilScreen() {
             ))}
           </View>
 
-          <View style={{ height: 40 }} />
+          {/* ===============================
+              COMUNIDADES CERCANAS
+          =============================== */}
+          <View style={styles.groupsSection}>
+            <Text style={[styles.sectionLabel, { color: MODES[mode].color }]}>
+              GRUPOS EN COMUN
+            </Text>
+
+            <TouchableOpacity style={styles.groupCard}>
+              <View
+                style={[
+                  styles.dotIndicator,
+                  { backgroundColor: MODES[mode].color },
+                ]}
+              />
+              <View>
+                <Text style={styles.groupName}>CENTRAL DE DATOS</Text>
+                <Text style={styles.groupStats}>
+                  Transferencia de energía activa...
+                </Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color="rgba(255,255,255,0.2)"
+                style={{ marginLeft: "auto" }}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ height: 60 }} />
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -303,5 +341,43 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     backgroundColor: "rgba(255,255,255,0.15)",
+  },
+
+  /* COMUNIDADES */
+  groupsSection: {
+    width: "100%",
+    paddingHorizontal: 20,
+    marginTop: 40,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    marginBottom: 15,
+    fontWeight: "900",
+    letterSpacing: 1,
+  },
+  groupCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#0D1117",
+    padding: 20,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+  },
+  dotIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 15,
+  },
+  groupName: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  groupStats: {
+    color: "rgba(255,255,255,0.3)",
+    fontSize: 10,
+    marginTop: 2,
   },
 });

@@ -13,13 +13,14 @@ import {
   PanResponder,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router"; // <-- Importar esto
+import { useNavigation } from "expo-router";
+import MensajesScreen from "./mensajes";
 
-import MensajesScreen from "./mensajes"; 
+const { width, height } = Dimensions.get("window");
+const ACCENT = "#00D4FF";
 
-const { width, height } = Dimensions.get('window');
+/* ---------------- MOCK DATA ---------------- */
 
-// --- DATOS MOCK (Igual que antes) ---
 const stories = [
   { id: "1", name: "You", image: "https://randomuser.me/api/portraits/women/44.jpg" },
   { id: "2", name: "Kaja", image: "https://i.pravatar.cc/100?img=2" },
@@ -34,15 +35,22 @@ const chatsData = [
   { id: "3", name: "Kaja Kumar", message: "Thanks bro, see you later", time: "2 mins", unread: 0, image: "https://i.pravatar.cc/100?img=12" },
 ];
 
-// --- COMPONENTE: FONDO (Igual que antes) ---
+/* ---------------- BACKGROUND ---------------- */
+
 const WaveBackground = () => (
   <View style={styles.waveContainer}>
     <View style={[styles.wave, { top: height * 0.1, left: -width * 0.5 }]} />
-    <View style={[styles.wave, { top: height * 0.5, right: -width * 0.6, borderColor: '#006EFF' }]} />
+    <View
+      style={[
+        styles.wave,
+        { top: height * 0.55, right: -width * 0.6, borderColor: ACCENT },
+      ]}
+    />
   </View>
 );
 
-// --- COMPONENTE: ITEM SWIPEABLE (Igual que antes) ---
+/* ---------------- SWIPE ITEM ---------------- */
+
 const SwipeableChatItem = ({ item, openChatId, setOpenChatId, onPress }: any) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const lastOffset = useRef(0);
@@ -52,27 +60,43 @@ const SwipeableChatItem = ({ item, openChatId, setOpenChatId, onPress }: any) =>
   }, [openChatId]);
 
   const close = () => {
-    Animated.spring(translateX, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }).start(() => { lastOffset.current = 0; });
+    Animated.spring(translateX, {
+      toValue: 0,
+      useNativeDriver: true,
+      tension: 60,
+      friction: 10,
+    }).start(() => (lastOffset.current = 0));
   };
 
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gesture) => Math.abs(gesture.dx) > 15 && Math.abs(gesture.dx) > Math.abs(gesture.dy),
+      onMoveShouldSetPanResponder: (_, g) =>
+        Math.abs(g.dx) > 10 && Math.abs(g.dx) > Math.abs(g.dy),
+
       onPanResponderGrant: () => setOpenChatId(item.id),
-      onPanResponderMove: (_, gesture) => {
-        let newX = gesture.dx + lastOffset.current;
-        if (newX > 80) newX = 80;
-        if (newX < -140) newX = -140;
+
+      onPanResponderMove: (_, g) => {
+        let newX = g.dx + lastOffset.current;
+        if (newX > 70) newX = 70;
+        if (newX < -100) newX = -100;
         translateX.setValue(newX);
       },
-      onPanResponderRelease: (_, gesture) => {
-        const x = gesture.dx + lastOffset.current;
-        if (x < -60) {
-          Animated.spring(translateX, { toValue: -140, useNativeDriver: true, bounciness: 4 }).start();
-          lastOffset.current = -140;
-        } else if (x > 60) {
-          Animated.spring(translateX, { toValue: 80, useNativeDriver: true, bounciness: 4 }).start();
-          lastOffset.current = 80;
+
+      onPanResponderRelease: (_, g) => {
+        const x = g.dx + lastOffset.current;
+
+        if (x < -50) {
+          Animated.spring(translateX, {
+            toValue: -100,
+            useNativeDriver: true,
+          }).start();
+          lastOffset.current = -100;
+        } else if (x > 50) {
+          Animated.spring(translateX, {
+            toValue: 70,
+            useNativeDriver: true,
+          }).start();
+          lastOffset.current = 70;
         } else {
           close();
         }
@@ -83,27 +107,39 @@ const SwipeableChatItem = ({ item, openChatId, setOpenChatId, onPress }: any) =>
   return (
     <View style={styles.chatWrapper}>
       <View style={styles.backgroundActions}>
-        <View style={styles.leftAction}><Ionicons name="pin" size={22} color="#006EFF" /></View>
-        <View style={styles.rightActions}>
-          <TouchableOpacity style={styles.actionIcon}><Ionicons name="trash-outline" size={22} color="#FF375F" /></TouchableOpacity>
-        </View>
+        <Ionicons name="pin" size={18} color={ACCENT} />
+        <Ionicons name="trash-outline" size={18} color="#FF375F" />
       </View>
 
-      <Animated.View {...panResponder.panHandlers} style={[styles.chatCard, { transform: [{ translateX }] }]}>
-        <TouchableOpacity activeOpacity={0.8} onPress={() => onPress(item)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+      <Animated.View
+        {...panResponder.panHandlers}
+        style={[styles.chatCard, { transform: [{ translateX }] }]}
+      >
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => onPress(item)}
+          style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+        >
           <View style={styles.avatarWrapper}>
             <Image source={{ uri: item.image }} style={styles.avatar} />
-            {item.unread > 0 && <View style={styles.onlineStatus} />}
+            {item.unread > 0 && <View style={styles.onlineDot} />}
           </View>
+
           <View style={styles.chatContent}>
             <View style={styles.chatHeader}>
               <Text style={styles.chatName}>{item.name}</Text>
               <Text style={styles.chatTime}>{item.time}</Text>
             </View>
+
             <View style={styles.chatFooter}>
-              <Text style={styles.chatMessage} numberOfLines={1}>{item.message}</Text>
+              <Text numberOfLines={1} style={styles.chatMessage}>
+                {item.message}
+              </Text>
+
               {item.unread > 0 && (
-                <View style={styles.unreadBadge}><Text style={styles.unreadText}>{item.unread}</Text></View>
+                <View style={styles.unreadBadge}>
+                  <Text style={styles.unreadText}>{item.unread}</Text>
+                </View>
               )}
             </View>
           </View>
@@ -113,18 +149,17 @@ const SwipeableChatItem = ({ item, openChatId, setOpenChatId, onPress }: any) =>
   );
 };
 
-// --- COMPONENTE PRINCIPAL MODIFICADO ---
+/* ---------------- MAIN ---------------- */
+
 export default function ChatsScreen() {
   const [selectedChat, setSelectedChat] = useState<any>(null);
   const [openChatId, setOpenChatId] = useState(null);
-  const navigation = useNavigation(); // Hook para controlar el TabBar
-  
+  const navigation = useNavigation();
   const slideAnim = useRef(new Animated.Value(height)).current;
 
-  // EFECTO CLAVE: Oculta o muestra el TabBar según si hay un chat seleccionado
   useEffect(() => {
     navigation.setOptions({
-      tabBarStyle: selectedChat ? { display: 'none' } : styles.tabBarConfig,
+      tabBarStyle: selectedChat ? { display: "none" } : styles.tabBarConfig,
     });
   }, [selectedChat]);
 
@@ -132,7 +167,7 @@ export default function ChatsScreen() {
     setSelectedChat(chat);
     Animated.timing(slideAnim, {
       toValue: 0,
-      duration: 350,
+      duration: 300,
       useNativeDriver: true,
     }).start();
   };
@@ -140,57 +175,89 @@ export default function ChatsScreen() {
   const handleCloseChat = () => {
     Animated.timing(slideAnim, {
       toValue: height,
-      duration: 250,
+      duration: 220,
       useNativeDriver: true,
-    }).start(() => {
-      setSelectedChat(null);
-    });
+    }).start(() => setSelectedChat(null));
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <WaveBackground />
-      
+
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.dateText}>MENSAJES RECIENTES</Text>
+            <Text style={styles.sectionMini}>MENSAJES RECIENTES</Text>
             <Text style={styles.headerTitle}>Chats</Text>
           </View>
+
           <View style={styles.headerIcons}>
-            <TouchableOpacity style={styles.iconCircle}><Ionicons name="search" size={20} color="#fff" /></TouchableOpacity>
-            <TouchableOpacity style={[styles.iconCircle, styles.plusBtn]}><Ionicons name="add" size={22} color="#fff" /></TouchableOpacity>
+            <TouchableOpacity style={styles.iconCircle}>
+              <Ionicons name="search" size={18} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.iconCircle, styles.plusBtn]}>
+              <Ionicons name="add" size={20} color="#000" />
+            </TouchableOpacity>
           </View>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesContainer}>
+          {/* STORIES */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.storiesContainer}
+          >
             {stories.map((item, index) => (
               <View key={item.id} style={styles.storyItem}>
-                <View style={[styles.storyCircle, index === 0 && styles.userStory]}>
-                  <Image source={{ uri: item.image }} style={styles.storyImage} />
+                <View
+                  style={[
+                    styles.storyCircle,
+                    index === 0 && styles.userStory,
+                  ]}
+                >
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.storyImage}
+                  />
                 </View>
                 <Text style={styles.storyName}>{item.name}</Text>
               </View>
             ))}
           </ScrollView>
-          
+
+          {/* FILTERS */}
           <View style={styles.filters}>
             {["All", "Favorites", "Work"].map((f, i) => (
-              <TouchableOpacity key={f} style={[styles.filterButton, i === 0 && styles.activeFilter]}>
-                <Text style={[styles.filterText, i === 0 && styles.activeFilterText]}>{f}</Text>
+              <TouchableOpacity
+                key={f}
+                style={[
+                  styles.filterButton,
+                  i === 0 && styles.activeFilter,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.filterText,
+                    i === 0 && styles.activeFilterText,
+                  ]}
+                >
+                  {f}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
 
+          {/* CHAT LIST */}
           <View style={styles.chatListContainer}>
             {chatsData.map((item) => (
-              <SwipeableChatItem 
+              <SwipeableChatItem
                 key={item.id}
-                item={item} 
-                openChatId={openChatId} 
-                setOpenChatId={setOpenChatId} 
+                item={item}
+                openChatId={openChatId}
+                setOpenChatId={setOpenChatId}
                 onPress={handleOpenChat}
               />
             ))}
@@ -198,69 +265,233 @@ export default function ChatsScreen() {
         </ScrollView>
       </SafeAreaView>
 
-      {/* OVERLAY ANIMADO (Mensajes.tsx) */}
       {selectedChat && (
-        <Animated.View style={[
-          styles.messageViewWrapper,
-          { transform: [{ translateY: slideAnim }] }
-        ]}>
-            <MensajesScreen 
-              chat={selectedChat} 
-              onBack={handleCloseChat} 
-            />
+        <Animated.View
+          style={[
+            styles.messageViewWrapper,
+            { transform: [{ translateY: slideAnim }] },
+          ]}
+        >
+          <MensajesScreen chat={selectedChat} onBack={handleCloseChat} />
         </Animated.View>
       )}
     </View>
   );
 }
 
+/* ---------------- STYLES ---------------- */
+
 const styles = StyleSheet.create({
-  // Copia tus estilos de chats.tsx aquí...
-  container: { flex: 1, backgroundColor: '#05080D' },
-  waveContainer: { ...StyleSheet.absoluteFillObject, overflow: 'hidden', zIndex: 0 },
-  wave: { position: 'absolute', width: width * 2, height: width * 2, borderRadius: width, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.05)' },
-  safeArea: { flex: 1, zIndex: 1 },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 20, paddingVertical: 15 },
-  dateText: { color: '#006EFF', fontSize: 10, fontWeight: '800', letterSpacing: 1.5, marginBottom: 4 },
-  headerTitle: { color: '#FFF', fontSize: 32, fontWeight: '900' },
-  headerIcons: { flexDirection: "row", gap: 12 },
-  iconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  plusBtn: { backgroundColor: '#006EFF', borderColor: '#006EFF' },
-  storiesContainer: { paddingLeft: 20, marginBottom: 20 },
-  storyItem: { alignItems: "center", marginRight: 18 },
-  storyCircle: { width: 66, height: 66, borderRadius: 33, padding: 3, borderWidth: 2, borderColor: '#00D4FF' },
-  userStory: { borderColor: 'rgba(255,255,255,0.2)', borderStyle: 'dashed' },
-  storyImage: { width: '100%', height: '100%', borderRadius: 30 },
-  storyName: { color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 6 },
-  filters: { flexDirection: "row", paddingHorizontal: 20, gap: 10 },
-  filterButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)' },
-  activeFilter: { backgroundColor: '#00D4FF' },
-  filterText: { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '600' },
-  activeFilterText: { color: '#000' },
-  chatListContainer: { paddingHorizontal: 16, marginTop: 25, paddingBottom: 100 },
-  chatWrapper: { marginBottom: 12, position: 'relative', justifyContent: 'center' },
-  backgroundActions: { ...StyleSheet.absoluteFillObject, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25 },
-  leftAction: { width: 40, alignItems: 'center' },
-  rightActions: { flexDirection: 'row', gap: 15 },
-  actionIcon: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  chatCard: { backgroundColor: '#0D1117', borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.08)', padding: 15 },
-  avatarWrapper: { position: 'relative' },
-  avatar: { width: 55, height: 55, borderRadius: 20, marginRight: 15 },
-  onlineStatus: { position: 'absolute', top: -2, right: 12, width: 14, height: 14, borderRadius: 7, backgroundColor: '#00D4FF', borderWidth: 3, borderColor: '#0D1117' },
+  container: { flex: 1, backgroundColor: "#05080D" },
+
+  waveContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
+  },
+
+  wave: {
+    position: "absolute",
+    width: width * 2,
+    height: width * 2,
+    borderRadius: width,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.05)",
+  },
+
+  safeArea: { flex: 1 },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+
+  sectionMini: {
+    color: ACCENT,
+    fontSize: 9,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+    marginBottom: 2,
+  },
+
+  headerTitle: {
+    color: "#FFF",
+    fontSize: 26,
+    fontWeight: "900",
+  },
+
+  headerIcons: { flexDirection: "row", gap: 10 },
+
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+
+  plusBtn: { backgroundColor: ACCENT, borderColor: ACCENT },
+
+  storiesContainer: {
+    paddingLeft: 20,
+    marginBottom: 18,
+  },
+
+  storyItem: { alignItems: "center", marginRight: 14 },
+
+  storyCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    padding: 3,
+    borderWidth: 2,
+    borderColor: ACCENT,
+  },
+
+  userStory: {
+    borderColor: "rgba(255,255,255,0.2)",
+    borderStyle: "dashed",
+  },
+
+  storyImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 26,
+  },
+
+  storyName: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 10,
+    marginTop: 4,
+  },
+
+  filters: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+
+  filterButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.05)",
+  },
+
+  activeFilter: { backgroundColor: ACCENT },
+
+  filterText: {
+    color: "rgba(255,255,255,0.6)",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+
+  activeFilterText: { color: "#000" },
+
+  chatListContainer: {
+    paddingHorizontal: 20,
+    marginTop: 15,
+    paddingBottom: 120,
+  },
+
+  chatWrapper: {
+    marginBottom: 6, // 🔥 más pegados
+    position: "relative",
+  },
+
+  backgroundActions: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 25,
+  },
+
+  chatCard: {
+    backgroundColor: "#0D1117",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+
+  avatarWrapper: { position: "relative" },
+
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    marginRight: 10,
+  },
+
+  onlineDot: {
+    position: "absolute",
+    top: -2,
+    right: 8,
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: ACCENT,
+    borderWidth: 2,
+    borderColor: "#0D1117",
+  },
+
   chatContent: { flex: 1 },
-  chatHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 5 },
-  chatName: { color: "#fff", fontWeight: "700", fontSize: 16 },
-  chatTime: { color: "rgba(255,255,255,0.3)", fontSize: 12 },
-  chatFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  chatMessage: { color: "rgba(255,255,255,0.5)", flex: 1, fontSize: 13 },
-  unreadBadge: { backgroundColor: "#FF375F", borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
-  unreadText: { color: "#fff", fontSize: 11, fontWeight: "800" },
+
+  chatHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 2,
+  },
+
+  chatName: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+
+  chatTime: {
+    color: "rgba(255,255,255,0.35)",
+    fontSize: 10,
+  },
+
+  chatFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  chatMessage: {
+    color: "rgba(255,255,255,0.5)",
+    flex: 1,
+    fontSize: 12,
+  },
+
+  unreadBadge: {
+    backgroundColor: ACCENT,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginLeft: 6,
+  },
+
+  unreadText: {
+    color: "#000",
+    fontSize: 9,
+    fontWeight: "800",
+  },
+
   messageViewWrapper: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#05080D',
+    backgroundColor: "#05080D",
     zIndex: 999,
   },
-  // ESTILO PARA RESTAURAR EL TABBAR (Debe coincidir con tu _layout)
+
   tabBarConfig: {
     position: "absolute",
     bottom: 10,
@@ -268,6 +499,6 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: "transparent",
     borderTopWidth: 0,
-    display: 'flex'
-  }
+    display: "flex",
+  },
 });
