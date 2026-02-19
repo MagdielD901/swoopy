@@ -85,12 +85,7 @@ export default function LoginScreen() {
   <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
 </TouchableOpacity>
 
-<TouchableOpacity 
-  style={styles.forgotContainer} 
-  onPress={() => router.push("/(tabs)/chats")}
->
-  <Text style={styles.forgotText}>Ir a Chats</Text>
-</TouchableOpacity>
+
 
           </View>
 
