@@ -1,15 +1,18 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, StatusBar, Dimensions, Animated, PanResponder, Modal
+  SafeAreaView, StatusBar, Dimensions, Animated, PanResponder, Modal, Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from "expo-router";
 import { BlurView } from 'expo-blur';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const ORB_SIZE = 260;
+
+// Detectamos si es Android para aplicar estilos de respaldo
+const isAndroid = Platform.OS === 'android';
 
 type ModeKey = 'SYNC' | 'BOOST' | 'OVERLOAD';
 
@@ -49,7 +52,7 @@ export default function Orbix3D() {
   const [energy, setEnergy] = useState(0);
   const [isExploded, setIsExploded] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [transferAmount, setTransferAmount] = useState(10); // Estado para la cantidad
+  const [transferAmount, setTransferAmount] = useState(10); 
 
   const rotateX = useRef(new Animated.Value(0)).current;
   const rotateY = useRef(new Animated.Value(0)).current;
@@ -145,68 +148,88 @@ export default function Orbix3D() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* --- MODAL DE TRANSFERENCIA --- */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={showModal}
         onRequestClose={() => setShowModal(false)}
       >
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowModal(false)}>
-          <BlurView intensity={90} tint="dark" style={styles.modalFullTop}>
-            <SafeAreaView>
-              <View style={[styles.modalContentPegado, { borderBottomColor: MODES[mode].color + '50' }]}>
-                <View style={styles.modalIndicator} />
-                <Text style={styles.modalTitle}>CONFIGURAR TRANSFERENCIA</Text>
+        <TouchableOpacity 
+          style={styles.modalOverlay} 
+          activeOpacity={1} 
+          onPress={() => setShowModal(false)}
+        >
+          {/* Aplicamos BlurView con una intensidad específica y color de respaldo para Android */}
+          <BlurView 
+            intensity={isAndroid ? 0 : 100} // En Android evitamos el motor de blur si falla
+            tint="dark" 
+            style={[
+                styles.modalContent, 
+                isAndroid && { backgroundColor: 'rgba(20, 20, 20, 0.98)' } // Fallback sólido para Android
+            ]}
+          >
+            <View style={styles.modalIndicator} />
+            
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalStepText}>TRANSFERENCIA ACTIVA</Text>
+                <Text style={styles.modalTitle}>CONFIGURAR ENVÍO</Text>
+              </View>
+              <TouchableOpacity onPress={() => setShowModal(false)}>
+                <Ionicons name="close-circle" size={32} color="rgba(255,255,255,0.3)" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+              <View style={styles.transferRow}>
+                <View style={styles.nodeItem}>
+                  <View style={[styles.nodeCircle, { backgroundColor: MODES[mode].color + '20', borderColor: MODES[mode].color }]}>
+                    <Ionicons name="flash" size={24} color={MODES[mode].color} />
+                  </View>
+                  <Text style={styles.nodeText}>YO</Text>
+                </View>
                 
-                <View style={styles.transferRow}>
-                    <View style={styles.nodeItem}>
-                        <View style={[styles.nodeCircle, { backgroundColor: MODES[mode].color + '20', borderColor: MODES[mode].color }]}>
-                            <Ionicons name="flash" size={24} color={MODES[mode].color} />
-                        </View>
-                        <Text style={styles.nodeText}>YO</Text>
-                    </View>
-                    <Ionicons name="repeat" size={20} color={MODES[mode].color} style={{ opacity: 0.5 }} />
-                    <View style={styles.nodeItem}>
-                        <View style={[styles.nodeCircle, { backgroundColor: '#111', borderColor: 'rgba(255,255,255,0.1)' }]}>
-                            <Ionicons name="person-add" size={24} color="#fff" />
-                        </View>
-                        <Text style={styles.nodeText}>USUARIO</Text>
-                    </View>
+                <Ionicons name="repeat" size={20} color={MODES[mode].color} style={{ opacity: 0.5 }} />
+                
+                <View style={styles.nodeItem}>
+                  <View style={[styles.nodeCircle, { backgroundColor: '#111', borderColor: 'rgba(255,255,255,0.1)' }]}>
+                    <Ionicons name="person-add" size={24} color="#fff" />
+                  </View>
+                  <Text style={styles.nodeText}>USUARIO</Text>
+                </View>
+              </View>
+
+              <View style={styles.amountSelector}>
+                <TouchableOpacity onPress={() => adjustAmount(-10)} style={styles.amountBtn}>
+                  <Ionicons name="remove" size={20} color="#fff" />
+                </TouchableOpacity>
+                
+                <View style={styles.amountDisplay}>
+                  <Text style={[styles.amountValue, { color: MODES[mode].color }]}>{transferAmount}</Text>
+                  <Text style={styles.amountLabel}>ORBIX</Text>
                 </View>
 
-                {/* --- SELECTOR DE CANTIDAD --- */}
-                <View style={styles.amountSelector}>
-                    <TouchableOpacity onPress={() => adjustAmount(-10)} style={styles.amountBtn}>
-                        <Ionicons name="remove" size={20} color="#fff" />
-                    </TouchableOpacity>
-                    
-                    <View style={styles.amountDisplay}>
-                        <Text style={[styles.amountValue, { color: MODES[mode].color }]}>{transferAmount}</Text>
-                        <Text style={styles.amountLabel}>ORBIX</Text>
-                    </View>
-
-                    <TouchableOpacity onPress={() => adjustAmount(10)} style={styles.amountBtn}>
-                        <Ionicons name="add" size={20} color="#fff" />
-                    </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity 
-                  style={[styles.modalBtn, { backgroundColor: MODES[mode].color }]}
-                  onPress={() => {
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                    setShowModal(false);
-                  }}
-                >
-                  <Text style={styles.modalBtnText}>CONFIRMAR ENVÍO</Text>
+                <TouchableOpacity onPress={() => adjustAmount(10)} style={styles.amountBtn}>
+                  <Ionicons name="add" size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
-            </SafeAreaView>
+
+              <TouchableOpacity 
+                style={[styles.modalBtn, { backgroundColor: MODES[mode].color }]}
+                onPress={() => {
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  setShowModal(false);
+                }}
+              >
+                <Text style={styles.modalBtnText}>CONFIRMAR ENVÍO</Text>
+              </TouchableOpacity>
+            </ScrollView>
           </BlurView>
         </TouchableOpacity>
       </Modal>
 
       <SafeAreaView style={{ flex: 1 }}>
+      
         <View style={styles.header}>
           <Text style={styles.headerTitle}>
             Orbix <Text style={[styles.coreText, { color: MODES[mode].color }]}>CORE</Text>
@@ -239,7 +262,8 @@ export default function Orbix3D() {
                 backgroundColor: MODES[mode].color, 
                 shadowColor: MODES[mode].color,
                 shadowRadius: shadowSpread as any,
-                opacity: glow.interpolate({ inputRange:[0,1], outputRange:[0.2, 0.5] })
+                opacity: glow.interpolate({ inputRange:[0,1], outputRange:[0.2, 0.5] }),
+                elevation: isAndroid ? 10 : 0 // Mejora visual en Android
               }]} />
               
               <Animated.View style={[styles.explosion, { borderColor: MODES[mode].color, opacity: explodeO, transform: [{ scale: explodeS }] }]} />
@@ -287,7 +311,7 @@ const styles = StyleSheet.create({
   energyBadge: { backgroundColor: 'rgba(255,255,255,0.03)', paddingHorizontal: 15, paddingVertical: 6, borderRadius: 20 },
   orbScene: { height: 450, justifyContent: 'center', alignItems: 'center' },
   orbWrapper: { width: ORB_SIZE + 40, height: ORB_SIZE + 40, justifyContent: 'center', alignItems: 'center' },
-  dynamicGlow: { position: 'absolute', width: ORB_SIZE - 100, height: ORB_SIZE - 100, borderRadius: 100, shadowOpacity: 1, elevation: 20 },
+  dynamicGlow: { position: 'absolute', width: ORB_SIZE - 100, height: ORB_SIZE - 100, borderRadius: 100, shadowOpacity: 1 },
   explosion: { position: 'absolute', width: ORB_SIZE, height: ORB_SIZE, borderRadius: ORB_SIZE / 2, borderWidth: 3 },
   energyRing: { position: 'absolute', width: ORB_SIZE - 20, height: ORB_SIZE - 20, borderRadius: 999, borderWidth: 1, opacity: 0.5 },
   orbCore: { width: ORB_SIZE - 50, height: ORB_SIZE - 50, borderRadius: (ORB_SIZE - 50) / 2, justifyContent: 'center', alignItems: 'center', shadowRadius: 60, shadowOpacity: 1, borderWidth: 2 },
@@ -306,24 +330,29 @@ const styles = StyleSheet.create({
   groupName: { color: '#fff', fontSize: 14, fontWeight: '700' },
   groupStats: { color: 'rgba(255,255,255,0.3)', fontSize: 10, marginTop: 2 },
 
-  /* --- MODAL --- */
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-start' },
-  modalFullTop: { width: '100%', borderBottomLeftRadius: 40, borderBottomRightRadius: 40, overflow: 'hidden' },
-  modalContentPegado: { padding: 25, alignItems: 'center', borderBottomWidth: 1.5 },
-  modalIndicator: { width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 2, marginBottom: 15 },
-  modalTitle: { color: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: '900', letterSpacing: 2, marginBottom: 20 },
-  transferRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '80%', marginBottom: 25 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  modalContent: { 
+    height: '70%', 
+    borderTopLeftRadius: 40, 
+    borderTopRightRadius: 40, 
+    padding: 25, 
+    overflow: 'hidden', 
+    borderWidth: 1, 
+    borderColor: 'rgba(255,255,255,0.1)' 
+  },
+  modalIndicator: { width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 2, alignSelf: 'center', marginBottom: 15 },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 30 },
+  modalStepText: { color: '#00D4FF', fontSize: 12, fontWeight: '700', letterSpacing: 1.5, marginBottom: 4 },
+  modalTitle: { color: '#FFF', fontSize: 24, fontWeight: '900' },
+  transferRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 35 },
   nodeItem: { alignItems: 'center' },
-  nodeCircle: { width: 55, height: 55, borderRadius: 20, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
-  nodeText: { color: 'rgba(255,255,255,0.4)', fontSize: 9, fontWeight: 'bold' },
-  
-  /* --- SELECTOR DE CANTIDAD --- */
-  amountSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 20, padding: 10, marginBottom: 30, width: '100%' },
-  amountBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', justifyContent: 'center', alignItems: 'center' },
+  nodeCircle: { width: 65, height: 65, borderRadius: 22, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
+  nodeText: { color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 'bold' },
+  amountSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 20, padding: 15, marginBottom: 35, width: '100%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  amountBtn: { width: 45, height: 45, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.05)', justifyContent: 'center', alignItems: 'center' },
   amountDisplay: { paddingHorizontal: 40, alignItems: 'center' },
-  amountValue: { fontSize: 32, fontWeight: '900' },
-  amountLabel: { fontSize: 8, color: 'rgba(255,255,255,0.3)', letterSpacing: 2, marginTop: -4 },
-
-  modalBtn: { width: '100%', paddingVertical: 18, borderRadius: 20, alignItems: 'center' },
-  modalBtnText: { color: '#000', fontWeight: '900', fontSize: 13, letterSpacing: 1 }
+  amountValue: { fontSize: 38, fontWeight: '900' },
+  amountLabel: { fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: 2, marginTop: -4 },
+  modalBtn: { width: '100%', height: 65, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  modalBtnText: { color: '#000', fontWeight: '900', fontSize: 14, letterSpacing: 1 }
 });

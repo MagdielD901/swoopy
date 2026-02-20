@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 
 const MODES = {
   SYNC: { color: '#00D4FF', label: 'SYNC' },
@@ -13,6 +14,7 @@ const MODES = {
 };
 
 export default function ControlScreen() {
+  const router = useRouter();
   const [mode] = useState<'SYNC' | 'BOOST' | 'OVERLOAD'>('SYNC');
   const [energy] = useState(0);
 
@@ -41,22 +43,25 @@ export default function ControlScreen() {
           
           {/* --- SECCIÓN CUENTA --- */}
           <View style={styles.groupsSection}>
-            <Text style={[styles.sectionLabel, { color: MODES[mode].color }]}>PERFIL</Text>
-            <TouchableOpacity activeOpacity={0.8}>
-              <BlurView intensity={20} tint="light" style={styles.accountCard}>
-                <View style={styles.avatarPlaceholder}>
-                  <Ionicons name="person" size={24} color="#fff" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.accountName}>Mi Cuenta</Text>
-                  <Text style={styles.accountSub}>Inicia sesión para sincronizar</Text>
-                </View>
-                <View style={[styles.loginButton, { backgroundColor: MODES[mode].color }]}>
-                  <Text style={styles.loginButtonText}>ENTRAR</Text>
-                </View>
-              </BlurView>
-            </TouchableOpacity>
+      <Text style={[styles.sectionLabel, { color: MODES[mode].color }]}>PERFIL</Text>
+      <TouchableOpacity 
+        activeOpacity={0.8}
+        onPress={() => router.push('/screens/cuenta')} // <--- Navega a app/account.tsx
+      >
+        <BlurView intensity={20} tint="light" style={styles.accountCard}>
+          <View style={styles.avatarPlaceholder}>
+            <Ionicons name="person" size={24} color="#fff" />
           </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.accountName}>Mi Cuenta</Text>
+            <Text style={styles.accountSub}>Inicia sesión para sincronizar</Text>
+          </View>
+          <View style={[styles.loginButton, { backgroundColor: MODES[mode].color }]}>
+            <Text style={styles.loginButtonText}>ENTRAR</Text>
+          </View>
+        </BlurView>
+      </TouchableOpacity>
+    </View>
 
           {/* --- BOTÓN SUSCRIPCIONES --- */}
           <View style={styles.groupsSection}>
