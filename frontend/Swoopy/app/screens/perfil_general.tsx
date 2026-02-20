@@ -1,10 +1,9 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Image,
-  TextInput,
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
@@ -14,7 +13,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
@@ -22,7 +20,7 @@ const { width, height } = Dimensions.get("window");
 const ACCENT = "#00D4FF";
 const PURPLE = "#7000FF";
 
-// --- COMPONENTE PARTÍCULA (EL QUE SUBE) ---
+// --- COMPONENTE PARTÍCULA (MANTENIENDO TU ESENCIA) ---
 const Particle = ({ index }: { index: number }) => {
   const moveAnim = useRef(new Animated.Value(0)).current;
   const randomX = useMemo(() => Math.random() * width, []);
@@ -40,7 +38,6 @@ const Particle = ({ index }: { index: number }) => {
         if (finished) startAnimation();
       });
     };
-    
     const timeout = setTimeout(startAnimation, index * 150);
     return () => clearTimeout(timeout);
   }, [index]);
@@ -71,19 +68,22 @@ const Particle = ({ index }: { index: number }) => {
   );
 };
 
-export default function EditarPerfilScreen() {
+export default function PerfilGeneralScreen() {
   const navigation = useNavigation();
-  const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/300?img=44");
-  const [name, setName] = useState("Anne Smith");
-  const [bio, setBio] = useState("¡Hola! Estoy usando swoopy :p");
 
-  // Partículas
+  // Datos del usuario (En un caso real vendrían por Props)
+  const userData = {
+    name: "Anne Smith",
+    bio: "¡Hola! Estoy usando swoopy :p \nExplorando el metaverso de Orbix.",
+    profileImage: "https://i.pravatar.cc/300?img=44",
+    totalOrbix: 1247
+  };
+
   const particlesArray = useMemo(() => Array.from({ length: 30 }), []);
 
-  // Simulación Orbix
-  const totalOrbix = 1247;
-  const diamonds = Math.floor(totalOrbix / 100);
-  const currentOrbix = totalOrbix % 100;
+  // Cálculos Orbix
+  const diamonds = Math.floor(userData.totalOrbix / 100);
+  const currentOrbix = userData.totalOrbix % 100;
   const progressPercent = currentOrbix / 100;
 
   const rank = useMemo(() => {
@@ -93,21 +93,11 @@ export default function EditarPerfilScreen() {
     return "Explorador";
   }, [diamonds]);
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result.canceled) setProfileImage(result.assets[0].uri);
-  };
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* FONTO DE PARTICULAS (TUS BOLITAS) */}
+      {/* FONDO DE BOLITAS (TU IDENTIDAD) */}
       <View style={StyleSheet.absoluteFill}>
         {particlesArray.map((_, i) => (
           <Particle key={`p-${i}`} index={i} />
@@ -122,20 +112,21 @@ export default function EditarPerfilScreen() {
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
               <Ionicons name="chevron-back" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Editar <Text style={{ color: ACCENT }}>Perfil</Text></Text>
-            <View style={{ width: 45 }} />
+            <Text style={styles.headerTitle}>Perfil <Text style={{ color: ACCENT }}>Swoopy</Text></Text>
+            <TouchableOpacity style={styles.backBtn}>
+              <Ionicons name="ellipsis-horizontal" size={24} color="#fff" />
+            </TouchableOpacity>
           </View>
 
-          {/* PERFIL */}
+          {/* PERFIL (VISTA) */}
           <View style={styles.profileSection}>
-            <TouchableOpacity style={styles.profileWrapper} onPress={pickImage} activeOpacity={0.9}>
+            <View style={styles.profileWrapper}>
               <View style={[styles.glowCircle, { borderColor: ACCENT }]} />
               <View style={styles.imageContainer}>
-                <Image source={{ uri: profileImage }} style={styles.profileImage} />
+                <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
               </View>
-            </TouchableOpacity>
+            </View>
 
-            {/* BADGE PREMIUM */}
             <View style={styles.premiumBadgeContainer}>
               <View style={styles.gradientCanvasBadge}>
                 <View style={[styles.miniBlob, { backgroundColor: ACCENT, top: -10, left: -10 }]} />
@@ -152,9 +143,18 @@ export default function EditarPerfilScreen() {
             </View>
           </View>
 
-          {/* SISTEMA ORBIX */}
+          {/* INFO CARD (SOLO LECTURA) */}
           <View style={styles.groupsSection}>
-            <Text style={[styles.sectionLabel, { color: ACCENT }]}>Sistema Orbix</Text>
+            <Text style={[styles.sectionLabel, { color: ACCENT }]}>Identidad</Text>
+            <BlurView intensity={20} tint="dark" style={styles.infoCard}>
+              <Text style={styles.displayName}>{userData.name}</Text>
+              <Text style={styles.displayBio}>{userData.bio}</Text>
+            </BlurView>
+          </View>
+
+          {/* SISTEMA ORBIX (VISTA PÚBLICA) */}
+          <View style={styles.groupsSection}>
+            <Text style={[styles.sectionLabel, { color: ACCENT }]}>Estatus Orbix</Text>
             <BlurView intensity={25} tint="dark" style={styles.orbixCard}>
               <View style={styles.orbixRow}>
                 <Text style={styles.diamondText}>💎 {diamonds} Diamantes</Text>
@@ -163,45 +163,25 @@ export default function EditarPerfilScreen() {
               <View style={styles.progressContainer}>
                 <View style={[styles.progressFill, { width: `${progressPercent * 100}%` }]} />
               </View>
-              <Text style={styles.progressLabel}>{currentOrbix}/100 Orbix para el siguiente nivel</Text>
+              <Text style={styles.progressLabel}>Rango actual: {rank}</Text>
             </BlurView>
           </View>
 
-          {/* FORMULARIO */}
-          <View style={styles.groupsSection}>
-            <Text style={[styles.sectionLabel, { color: ACCENT }]}>Información Pública</Text>
-            <BlurView intensity={15} tint="light" style={styles.formCard}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>NOMBRE</Text>
-                <TextInput
-                  style={styles.input}
-                  value={name}
-                  onChangeText={setName}
-                  placeholderTextColor="rgba(255,255,255,0.3)"
-                />
-              </View>
-              <View style={[styles.inputGroup, { borderBottomWidth: 0 }]}>
-                <Text style={styles.label}>BIOGRAFÍA</Text>
-                <TextInput
-                  style={[styles.input, { height: 70, textAlignVertical: "top" }]}
-                  value={bio}
-                  onChangeText={setBio}
-                  multiline
-                />
-              </View>
-            </BlurView>
-          </View>
-
-          {/* BOTÓN GUARDAR */}
-          <View style={styles.groupsSection}>
-            <TouchableOpacity activeOpacity={0.8} style={styles.saveButtonContainer} onPress={() => navigation.goBack()}>
+          {/* ACCIONES DE PERFIL */}
+          <View style={[styles.groupsSection, { flexDirection: 'row', gap: 15 }]}>
+            <TouchableOpacity activeOpacity={0.8} style={[styles.actionButton, { flex: 2 }]}>
               <View style={styles.gradientCanvasBtn}>
                 <View style={[styles.blobBtn, { backgroundColor: ACCENT, top: -20, left: -20 }]} />
                 <View style={[styles.blobBtn, { backgroundColor: PURPLE, bottom: -40, right: -20, width: 150 }]} />
               </View>
               <BlurView intensity={60} tint="dark" style={styles.saveButtonBlur}>
-                <Text style={styles.saveText}>Guardar Cambios</Text>
-                <Ionicons name="checkmark-circle" size={20} color="#fff" style={{ marginLeft: 10 }} />
+                <Text style={styles.saveText}>Seguir</Text>
+              </BlurView>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.8} style={[styles.actionButton, { flex: 1 }]}>
+               <BlurView intensity={20} tint="light" style={styles.messageButtonBlur}>
+                <Ionicons name="chatbubble-ellipses" size={24} color="#fff" />
               </BlurView>
             </TouchableOpacity>
           </View>
@@ -216,7 +196,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
   scrollContent: { paddingBottom: 40 },
   
-  // Estilo Bolitas Flotantes
   particle: {
     position: 'absolute',
     backgroundColor: '#FFF',
@@ -235,7 +214,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
-  headerTitle: { color: "#fff", fontSize: 26, fontWeight: "900" },
+  headerTitle: { color: "#fff", fontSize: 24, fontWeight: "900" },
   backBtn: {
     backgroundColor: "rgba(255,255,255,0.05)",
     padding: 10,
@@ -246,23 +225,23 @@ const styles = StyleSheet.create({
 
   profileSection: { alignItems: "center", marginBottom: 20 },
   profileWrapper: {
-    width: 130,
-    height: 130,
+    width: 140,
+    height: 140,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
   },
-  imageContainer: { width: 122, height: 122, borderRadius: 61, overflow: "hidden" },
+  imageContainer: { width: 130, height: 130, borderRadius: 65, overflow: "hidden" },
   profileImage: { width: "100%", height: "100%" },
   glowCircle: {
     position: "absolute",
-    width: 130,
-    height: 130,
-    borderRadius: 65,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     borderWidth: 2,
     shadowColor: ACCENT,
     shadowOpacity: 1,
-    shadowRadius: 10,
+    shadowRadius: 15,
   },
 
   premiumBadgeContainer: {
@@ -293,11 +272,22 @@ const styles = StyleSheet.create({
   groupsSection: { width: "100%", paddingHorizontal: 25, marginTop: 25 },
   sectionLabel: { fontSize: 11, marginBottom: 12, fontWeight: "900", letterSpacing: 1.5 },
 
+  infoCard: {
+    borderRadius: 25,
+    padding: 25,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+    backgroundColor: 'rgba(255,255,255,0.02)',
+    overflow: 'hidden'
+  },
+  displayName: { color: '#fff', fontSize: 24, fontWeight: '900', marginBottom: 10 },
+  displayBio: { color: 'rgba(255,255,255,0.6)', fontSize: 14, lineHeight: 20 },
+
   orbixCard: {
     borderRadius: 25,
     padding: 20,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: "rgba(255,255,255,0.05)",
     backgroundColor: 'rgba(255,255,255,0.02)',
     overflow: 'hidden'
   },
@@ -306,23 +296,21 @@ const styles = StyleSheet.create({
   orbixText: { color: ACCENT, fontSize: 16, fontWeight: "700" },
   progressContainer: { height: 6, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 10, overflow: "hidden" },
   progressFill: { height: "100%", backgroundColor: ACCENT },
-  progressLabel: { marginTop: 10, color: "rgba(255,255,255,0.4)", fontSize: 11, textAlign: 'center' },
+  progressLabel: { marginTop: 10, color: "rgba(255,255,255,0.4)", fontSize: 11 },
 
-  formCard: {
-    borderRadius: 25,
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    paddingHorizontal: 20,
-    overflow: 'hidden'
-  },
-  inputGroup: { paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.05)" },
-  label: { color: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: "800", marginBottom: 5 },
-  input: { color: "#fff", fontSize: 16 },
-
-  saveButtonContainer: { borderRadius: 25, overflow: "hidden", height: 65, marginTop: 10 },
+  actionButton: { borderRadius: 25, overflow: "hidden", height: 65 },
   gradientCanvasBtn: { ...StyleSheet.absoluteFillObject, backgroundColor: "#111" },
   blobBtn: { position: "absolute", width: 100, height: 100, borderRadius: 50, opacity: 0.6 },
-  saveButtonBlur: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", borderRadius: 25 },
-  saveText: { color: "#fff", fontSize: 16, fontWeight: "900" },
+  saveButtonBlur: { flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 25 },
+  saveText: { color: "#fff", fontSize: 18, fontWeight: "900" },
+  
+  messageButtonBlur: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 25
+  }
 });

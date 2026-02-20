@@ -179,7 +179,7 @@ export default function ChatsScreen() {
 
           {/* FILTERS */}
           <View style={styles.filters}>
-            {["All", "Favorites", "Work"].map((f, i) => (
+            {["All", "Favorites", "Marketplace"].map((f, i) => (
               <TouchableOpacity
                 key={f}
                 style={[styles.filterButton, i === 0 && styles.activeFilter]}
